@@ -6,11 +6,16 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
     
-    var itemArray = [TodoData(name: "Todo Quotes App Update", checkedMark: false),
-                     TodoData(name: "call with friends", checkedMark: false)]
+    var itemArray = [Items]()
+        
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+        
+        //[Items(name: "Todo Quotes App Update", checkedMark: false),
+       //              Items(name: "call with friends", checkedMark: false)]
     
     // ["Todo Quotes App Update","Wash clothes","call with friends"]
     //var itemArray = [Item]()
@@ -27,12 +32,19 @@ class ToDoListViewController: UITableViewController {
         //itemArray.append(newItem)
         
         
-        print(filePath)
+        let newItem = Items(context: context)
+        newItem.name = "have breakfast"
+        newItem.checkedMark = false
+        
+        
+        itemArray.append(newItem)
+        
+       // print(filePath)
         
 //        if let item = defaults.array(forKey: "TodoListArray") as? [TodoData]{
 //            itemArray = item
 //        }
-         loadItems()
+//         loadItems()
         
     }
     
@@ -75,7 +87,11 @@ class ToDoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Todo Item", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { action in
             if let data = textField.text{
-                self.itemArray.append(TodoData(name: data, checkedMark: false))
+                let newItem = Items(context: self.context)
+                newItem.name = data
+                newItem.checkedMark = false
+                
+                self.itemArray.append(newItem)
                 
                 //self.defaults.setValue(self.itemArray, forKey: "TodoListArray")
                 self.saveItem()
@@ -95,26 +111,29 @@ class ToDoListViewController: UITableViewController {
     }
     
     func saveItem(){
-        let encoder = PropertyListEncoder()
+//        let encoder = PropertyListEncoder()
         do{
-            let datas = try encoder.encode(itemArray)
-            try datas.write(to: filePath!)
+//            let datas = try encoder.encode(itemArray)
+//            try datas.write(to: filePath!)
+            try context.save()
+            
         }catch{
-            print("error in encoding")
+//            print("error in encoding")
+            print("error saving context\(error)")
         }
         self.tableView.reloadData()
     }
-    func loadItems(){
-        if let data = try? Data(contentsOf: filePath!){
-            let decoder = PropertyListDecoder()
-            do{
-                itemArray = try decoder.decode([TodoData].self, from: data)
-            }catch{
-                print("error in decoding")
-            }
-            
-        }
-    }
+//    func loadItems(){
+//        if let data = try? Data(contentsOf: filePath!){
+//            let decoder = PropertyListDecoder()
+//            do{
+//                itemArray = try decoder.decode([Items].self, from: data)
+//            }catch{
+//                print("error in decoding")
+//            }
+//
+//        }
+//    }
     
 }
 
