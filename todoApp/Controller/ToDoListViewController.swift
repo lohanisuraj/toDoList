@@ -22,7 +22,7 @@ class ToDoListViewController: UITableViewController {
 //    let defaults = UserDefaults.standard
     
     
-    let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+ //   let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +31,7 @@ class ToDoListViewController: UITableViewController {
         // newItem.title = "great"
         //itemArray.append(newItem)
         
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         let newItem = Items(context: context)
         newItem.name = "have breakfast"
@@ -44,7 +45,7 @@ class ToDoListViewController: UITableViewController {
 //        if let item = defaults.array(forKey: "TodoListArray") as? [TodoData]{
 //            itemArray = item
 //        }
-//         loadItems()
+         loadItems()
         
     }
     
@@ -123,7 +124,7 @@ class ToDoListViewController: UITableViewController {
         }
         self.tableView.reloadData()
     }
-//    func loadItems(){
+    func loadItems(){
 //        if let data = try? Data(contentsOf: filePath!){
 //            let decoder = PropertyListDecoder()
 //            do{
@@ -133,7 +134,13 @@ class ToDoListViewController: UITableViewController {
 //            }
 //
 //        }
-//    }
+        let request: NSFetchRequest = Items.fetchRequest()
+        do {
+            itemArray = try context.fetch(request)
+        }catch{
+            print("error in fetching data \(error)")
+        }
+    }
     
 }
 
