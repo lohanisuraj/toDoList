@@ -71,9 +71,14 @@ class ToDoListViewController: UITableViewController {
         
         //title is changed
         //itemArray[indexPath.row].setValue("good morning", forKey: "name")
-      
+        
+        //to delete item
+        context.delete(itemArray[indexPath.row])
+        itemArray.remove(at: indexPath.row)
+        
+        
         //this is updating part
-        itemArray[indexPath.row].checkedMark = !itemArray[indexPath.row].checkedMark
+        //itemArray[indexPath.row].checkedMark = !itemArray[indexPath.row].checkedMark
             
      
         saveItem()
