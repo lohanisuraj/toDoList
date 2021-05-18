@@ -69,8 +69,10 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         //print(itemArray[indexPath.row])
         
+        //title is changed
+        //itemArray[indexPath.row].setValue("good morning", forKey: "name")
       
-            
+        //this is updating part
         itemArray[indexPath.row].checkedMark = !itemArray[indexPath.row].checkedMark
             
      
