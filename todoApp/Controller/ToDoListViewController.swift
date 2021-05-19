@@ -11,6 +11,7 @@ import CoreData
 class ToDoListViewController: UITableViewController {
     
     var itemArray = [Items]()
+    var filterItemArray = [Items]()
         
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
@@ -45,7 +46,8 @@ class ToDoListViewController: UITableViewController {
 //        if let item = defaults.array(forKey: "TodoListArray") as? [TodoData]{
 //            itemArray = item
 //        }
-         loadItems()
+       
+        loadItems()
         
     }
     
@@ -73,12 +75,12 @@ class ToDoListViewController: UITableViewController {
         //itemArray[indexPath.row].setValue("good morning", forKey: "name")
         
         //to delete item
-        context.delete(itemArray[indexPath.row])
-        itemArray.remove(at: indexPath.row)
-        
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
+//        
         
         //this is updating part
-        //itemArray[indexPath.row].checkedMark = !itemArray[indexPath.row].checkedMark
+        itemArray[indexPath.row].checkedMark = !itemArray[indexPath.row].checkedMark
             
      
         saveItem()
@@ -131,7 +133,9 @@ class ToDoListViewController: UITableViewController {
         }
         self.tableView.reloadData()
     }
-    func loadItems(){
+    func loadItems(with request: NSFetchRequest<Items> = Items.fetchRequest()){
+      //  let request: NSFetchRequest<Items> = Items.fetchRequest()
+        
 //        if let data = try? Data(contentsOf: filePath!){
 //            let decoder = PropertyListDecoder()
 //            do{
@@ -141,13 +145,48 @@ class ToDoListViewController: UITableViewController {
 //            }
 //
 //        }
-        let request: NSFetchRequest = Items.fetchRequest()
+        
         do {
             itemArray = try context.fetch(request)
         }catch{
             print("error in fetching data \(error)")
         }
+        tableView.reloadData()
     }
     
+}
+//MARK:- UISearchBarDelegate
+extension ToDoListViewController : UISearchBarDelegate{
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Items> = Items.fetchRequest()
+        
+        request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
+        
+        //request.predicate = predicate
+        
+        request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
+        //request.sortDescriptors = [sortDescriptor]
+        
+        loadItems(with: request)
+        
+//
+//        do{
+//            itemArray = try context.fetch(request)
+//        }catch{
+//            print(error)
+//        }
+//        tableView.reloadData()
+        
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0{
+            loadItems()
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
+            }
+            
+        }
+    }
 }
 
