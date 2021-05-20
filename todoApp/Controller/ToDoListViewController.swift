@@ -11,7 +11,7 @@ import CoreData
 class ToDoListViewController: UITableViewController {
     
     var itemArray = [Items]()
-    var filterItemArray = [Items]()
+
         
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         
