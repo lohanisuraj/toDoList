@@ -38,7 +38,6 @@ class ToDoListViewController: UITableViewController {
         newItem.name = "have breakfast"
         newItem.checkedMark = false
         
-        
         itemArray.append(newItem)
         
        // print(filePath)

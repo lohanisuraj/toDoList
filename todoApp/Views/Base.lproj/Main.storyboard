@@ -98,6 +98,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="ToDoList" id="kKl-7d-LAK">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="PTt-nV-k4f">
+                            <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="wZB-IW-cm8" id="PJo-pX-LcU"/>
                             </connections>
