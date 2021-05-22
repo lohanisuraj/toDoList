@@ -10,6 +10,13 @@ import CoreData
 
 class ToDoListViewController: UITableViewController {
     
+    var selectedCatogotry: Catogories?{
+        didSet{
+            loadItems()
+        }
+    }
+    
+    
     var itemArray = [Items]()
 
         
@@ -26,6 +33,7 @@ class ToDoListViewController: UITableViewController {
  //   let filePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         //let newItem = Item()
@@ -34,11 +42,11 @@ class ToDoListViewController: UITableViewController {
         
         print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
-        let newItem = Items(context: context)
-        newItem.name = "have breakfast"
-        newItem.checkedMark = false
-        
-        itemArray.append(newItem)
+//        let newItem = Items(context: context)
+//        newItem.name = "have breakfast"
+//        newItem.checkedMark = false
+//
+//        itemArray.append(newItem)
         
        // print(filePath)
         
@@ -46,8 +54,6 @@ class ToDoListViewController: UITableViewController {
 //            itemArray = item
 //        }
        
-        loadItems()
-        
     }
     
     //MARK:- tableviewDatasource
@@ -100,7 +106,11 @@ class ToDoListViewController: UITableViewController {
                 newItem.name = data
                 newItem.checkedMark = false
                 
+                newItem.parentCategory = self.selectedCatogotry
+                
                 self.itemArray.append(newItem)
+                
+                
                 
                 //self.defaults.setValue(self.itemArray, forKey: "TodoListArray")
                 self.saveItem()
@@ -132,7 +142,7 @@ class ToDoListViewController: UITableViewController {
         }
         self.tableView.reloadData()
     }
-    func loadItems(with request: NSFetchRequest<Items> = Items.fetchRequest()){
+    func loadItems(with request: NSFetchRequest<Items> = Items.fetchRequest(),predicate: NSPredicate? = nil){
       //  let request: NSFetchRequest<Items> = Items.fetchRequest()
         
 //        if let data = try? Data(contentsOf: filePath!){
@@ -144,7 +154,18 @@ class ToDoListViewController: UITableViewController {
 //            }
 //
 //        }
-        
+        let catogororyPredicate = NSPredicate(format: "parentCategory.title MATCHES %@", selectedCatogotry!.title!)
+        if let additionalPredicate = predicate{
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [catogororyPredicate,additionalPredicate])
+            
+            request.predicate = compoundPredicate
+        }else{
+            request.predicate = catogororyPredicate
+        }
+//
+//        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [catogororyPredicate,predicate])
+//
+//        request.predicate = compoundPredicate
         do {
             itemArray = try context.fetch(request)
         }catch{
@@ -159,14 +180,14 @@ extension ToDoListViewController : UISearchBarDelegate{
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let request: NSFetchRequest<Items> = Items.fetchRequest()
         
-        request.predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
+       let predicate = NSPredicate(format: "name CONTAINS[cd] %@", searchBar.text!)
         
         //request.predicate = predicate
         
         request.sortDescriptors = [NSSortDescriptor(key: "name", ascending: true)]
         //request.sortDescriptors = [sortDescriptor]
         
-        loadItems(with: request)
+        loadItems(with: request,predicate: predicate)
         
 //
 //        do{

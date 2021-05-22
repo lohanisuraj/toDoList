@@ -36,7 +36,7 @@ class CatogoryTableViewController: UITableViewController {
             self.catogoryArray.append(newCatogory)
             self.saveCatogories()
             
-            self.tableView.reloadData()
+           
         }
         alert.addTextField { uitexField in
             uitexField.placeholder  = "Enter your new Catogory Here."
@@ -54,14 +54,16 @@ class CatogoryTableViewController: UITableViewController {
         }catch{
             print(error)
         }
+        tableView.reloadData()
     }
     func loadCatogories(){
-        let fetch:NSFetchRequest<Catogories> = Catogories.fetchRequest()
+        let request:NSFetchRequest<Catogories> = Catogories.fetchRequest()
         do{
-            catogoryArray = try context.fetch(fetch)
+            catogoryArray = try context.fetch(request)
         }catch{
             print(error)
         }
+        tableView.reloadData()
     }
     
     
@@ -77,7 +79,14 @@ class CatogoryTableViewController: UITableViewController {
     
     //MARK:- tableview Delegate
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        performSegue(withIdentifier: "goToItem", sender: self)
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! ToDoListViewController
+        if let indexpath = tableView.indexPathForSelectedRow{
+            destinationVC.selectedCatogotry = catogoryArray[indexpath.row]
+        }
+            
         
     }
 }
